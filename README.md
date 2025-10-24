@@ -68,33 +68,9 @@ Com:
 - Documento de decisões arquiteturais
 
 ## Suporte
------- VOLTAR
-- 💬 **Discord**: [link do servidor]
+- 💬 **Discord**: https://discord.gg/z8pVH26j
 - 📧 **Email**: gsilvestre@arcca.io
 - 📧 **Telefone**: (11) 93016 - 3509
-
----
-
-## ⚙️ Comandos Úteis
-
-```bash
-# Parar serviços
-docker-compose down
-
-# Resetar dados (CUIDADO: apaga tudo)
-docker-compose down -v
-docker-compose up -d postgres
-docker-compose run --rm data-generator
-
-# Ver logs da geração
-docker-compose logs -f data-generator
-
-# Backup do banco
-docker-compose exec postgres pg_dump -U challenge challenge_db > backup.sql
-
-# Restaurar backup
-docker-compose exec -T postgres psql -U challenge challenge_db < backup.sql
-```
 
 ---
 
