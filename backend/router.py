@@ -1,7 +1,11 @@
+# backend/router.py
+
 from fastapi import APIRouter, HTTPException
 import time
 import psycopg2
 from typing import List, Dict, Any
+
+# Importações de módulos (Assumindo que existem e são absolutas)
 from backend.query_builder import build_analytics_query
 from backend.database import get_db_connection
 from backend.models import PivotRequest 
@@ -9,9 +13,10 @@ from backend.models import PivotRequest
 router = APIRouter()
 
 # ----------------------------------------------------
-# A. ROTA CRÍTICA PARA TESTAR CONEXÃO
+# A. ROTA CRÍTICA PARA TESTAR CONEXÃO (Corrigida)
 # ----------------------------------------------------
-@router.get("/analytics/pivot")
+
+@router.get("/status") 
 def get_status():
     """ Verifica a conexão com o DB e a contagem de dados. """
     conn = None
@@ -33,8 +38,9 @@ def get_status():
             conn.close()
 
 # ----------------------------------------------------
-# B. ROTA PRINCIPAL DE ANALYTICS (O Motor de Queries)
+# B. ROTA PRINCIPAL DE ANALYTICS (Corrigida)
 # ----------------------------------------------------
+
 @router.post("/analytics/pivot")
 def get_pivot_data(request_body: PivotRequest): 
     conn = None
