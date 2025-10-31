@@ -86,7 +86,14 @@ def setup_base_data(conn):
     """Create brands, channels, payment types"""
     print("Setting up base data...")
     cursor = conn.cursor()
-    
+
+    try:
+        cursor.execute(
+            "INSERT INTO brands (id, name) VALUES (%s, %s) ON CONFLICT (id) DO NOTHING",
+            (BRAND_ID, "Arcca Global Brand")
+        )
+    except psycopg2.errors.DuplicateTable:
+        pass
     # Sub-brands
     sub_brands = ['Challenge Burger', 'Challenge Pizza', 'Challenge Sushi']
     sub_brand_ids = []

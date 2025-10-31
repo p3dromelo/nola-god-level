@@ -19,6 +19,20 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: challenge_db
+      DB_USER: challenge
+      DB_PASS: challenge_2024
+    depends_on:
+      - postgres
+
   data-generator:
     build:
       context: .
