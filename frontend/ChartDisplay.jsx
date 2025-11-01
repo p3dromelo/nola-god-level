@@ -40,27 +40,27 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs }) => {
     const renderTable = () => {
         if (!chartData || chartData.length === 0) return null;
 
-        const header = Object.keys(chartData[0]);
+        const headers = Object.keys(chartData[0]);
 
-        return (
-            <div className="data-table">
-        <table>
-          <thead>
-            <tr>
-              {headers.map(h => <th key={h}>{h.toUpperCase()}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {chartData.map((row, index) => (
-              <tr key={index}>
-                {headers.map(h => <td key={h}>{row[h]}</td>)}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+      return (
+              <div className="data-table">
+                  <table>
+                      <thead>
+                          <tr>
+                              {headers.map(h => <th key={h}>{h.toUpperCase()}</th>)} 
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {chartData.map((row, index) => (
+                              <tr key={index}>
+                                  {headers.map(h => <td key={h}>{row[h]}</td>)}
+                              </tr>
+                          ))}
+                      </tbody>
+                  </table>
+              </div>
+          );
+      };
 
   return (
     <div className="panel chart-display">

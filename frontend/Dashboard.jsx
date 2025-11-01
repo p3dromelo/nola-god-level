@@ -19,7 +19,6 @@ const INITIAL_QUERY_STATE = {
 };
 
 const Dashboard = () => {
-    // 🌟 CORREÇÃO CRÍTICA AQUI 🌟
     const [queryState, setQueryState] = useState(INITIAL_QUERY_STATE);
     const [chartData, setChartData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -89,7 +88,6 @@ const Dashboard = () => {
                     <QueryControls 
                         queryState={queryState} 
                         setQueryState={setQueryState}
-                        // Inclui o FilterPanel se você optar por combinar os controles
                     />
                 </div>
             </div>
