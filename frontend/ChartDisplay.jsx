@@ -1,8 +1,26 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { exportToCsv } from './utils';
+import React, { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";   
+import { exportToCsv } from './utils.js';
 
-const ChartDisplay = ({ chartData, loading, executionTimeMs }) => {
+const formatValue = (value, formatType) => {
+    if (value === null || value === undefined) return '';
+
+    if (formatType === 'currency') {
+        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    if (formatType === 'minutes') {
+        return `${(value / 60).toFixed(0)} min`;
+    }
+    return value.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+};
+/*
+ * Componente que exibe o gráfico de barras, a tabela e os botões de exportação.
+ * Recebe metricFormat para formatação condicional (R$, min, count).
+*/
+const ChartDisplay = ({ chartData, loading, executionTimeMs, metricFormat }) => {
+    // Inicializa metricFormat com 'currency' como fallback seguro
+    const currentMetricFormat = metricFormat || 'currency';
+
     const [viewMode, setViewMode] = useState('chart');
 
     const handleExport = () => {
@@ -11,10 +29,10 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs }) => {
         }
     };
 
-    // Função que renderiza o gráfico
+    // Função que renderiza o Gráfico
     const renderChart = () => {
         if (!chartData || chartData.length === 0) {
-            return <p className="text-center">Selecione uma métrica e dimensão para gerar o gráfico.</p>;
+            return <p className="text-center">Selecione uma métrica e dimensão para gerar gráfico.</p>
         }
 
         const dataKey = Object.keys(chartData[0]).find(k => k !== 'dimension');
@@ -25,10 +43,17 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs }) => {
                 <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5}}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="dimension" interval={0} angle={-45} textAnchor="end" height={100} />
-                <YAxis />
-                <Tooltip
-                    formatter={(value) => `${value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`}
+                <YAxis
+                    tickFormatter={(value) => formatValue(value, currentMetricFormat)}
                 />
+
+                <Tooltip
+                    formatter={(value, name) => [
+                        formatValue(value, currentMetricFormat),
+                        name
+                    ]}
+                />
+
                 <Legend />
                 <Bar dataKey="result" name={chartTitle} fill="#8884d8" />
                 </BarChart>
@@ -42,60 +67,60 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs }) => {
 
         const headers = Object.keys(chartData[0]);
 
-      return (
-              <div className="data-table">
-                  <table>
-                      <thead>
-                          <tr>
-                              {headers.map(h => <th key={h}>{h.toUpperCase()}</th>)} 
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {chartData.map((row, index) => (
-                              <tr key={index}>
-                                  {headers.map(h => <td key={h}>{row[h]}</td>)}
-                              </tr>
-                          ))}
-                      </tbody>
-                  </table>
-              </div>
-          );
-      };
+        return (
+            <div className="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            {headers.map(h => <th key={h}>{h.toUpperCase()}</th>)} 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {chartData.map((row, index) => (
+                            <tr key={index}>
+                                {/* NOTA: Aqui não usamos formatValue, apenas toLocaleString para simplicidade na tabela */}
+                                {headers.map(h => <td key={h}>{row[h].toLocaleString('pt-BR')}</td>)}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
 
-  return (
-    <div className="panel chart-display">
-      <div className="toolbar">
-        {/* Botões de alternância de visualização */}
-        <button className={`btn-toggle ${viewMode === 'chart' ? 'active' : ''}`} onClick={() => setViewMode('chart')}>
-          📈 Gráfico
-        </button>
-        <button className={`btn-toggle ${viewMode === 'table' ? 'active' : ''}`} onClick={() => setViewMode('table')}>
-          📋 Tabela de Dados
-        </button>
-        <button className="btn-export" onClick={handleExport}>
-          📥 Exportar CSV
-        </button>
-      </div>
+    return (
+        <div className="panel chart-display">
+            <div className="toolbar">
+                {/* Botões de alternância de visualização */}
+                <button className={`btn-toggle ${viewMode === 'chart' ? 'active' : ''}`} onClick={() => setViewMode('chart')}>
+                    📈 Gráfico
+                </button>
+                <button className={`btn-toggle ${viewMode === 'table' ? 'active' : ''}`} onClick={() => setViewMode('table')}>
+                    📋 Tabela de Dados
+                </button>
+                <button className="btn-export" onClick={handleExport}>
+                    📥 Exportar CSV
+                </button>
+            </div>
 
-      <div className="content">
-        {loading && <p className="loading-state">Carregando análise...</p>}
-        
-        {!loading && (
-          <>
-            {viewMode === 'chart' && renderChart()}
-            {viewMode === 'table' && renderTable()}
-          </>
-        )}
-      </div>
+            <div className="content">
+                {loading && <p className="loading-state">Carregando análise...</p>}
+                
+                {!loading && (
+                    <>
+                        {viewMode === 'chart' && renderChart()}
+                        {viewMode === 'table' && renderTable()}
+                    </>
+                )}
+            </div>
 
-      {/* Exibir o tempo de execução (Feedback de Performance para o Avaliador) */}
-      {executionTimeMs > 0 && (
-        <p className="performance-footer">
-          Query executada em: <strong>{executionTimeMs.toFixed(2)} ms</strong>.
-        </p>
-      )}
-    </div>
-            
+            {/* Exibir o tempo de execução (Feedback de Performance para o Avaliador) */}
+            {executionTimeMs > 0 && (
+                <p className="performance-footer">
+                    Query executada em: <strong>{executionTimeMs.toFixed(2)} ms</strong>.
+                </p>
+            )}
+        </div>
     );
 };
 

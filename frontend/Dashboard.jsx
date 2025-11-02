@@ -1,106 +1,84 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import MetricSelector from './MetricSelector.jsx';
-import FilterPanel from './FilterPanel.jsx';
-import ChartDisplay from './ChartDisplay.jsx';
-import QuickMetrics from './QuickMetrics.jsx';
-import QueryControls from './QueryControls.jsx';
+import React, { useState, useEffect } from "react";
+import HomeTab from './HomeTab.jsx';
+import DynamicAnalysisTab from './DynamicAnalysisTab.jsx';
+import GeoAnalysisTab from './GeoAnalysisTab.jsx';
 
-const API_URL = 'http://localhost:8000/api/v1/analytics/pivot';
+// URL para buscar a lista de Lojas e Canais para os filtros
+const METADATA_URL = 'http://localhost:8000/api/v1/metada/filters';
 
-const INITIAL_QUERY_STATE = {
-    metric: 'total_amount',
-    agg_func: 'SUM',
-    group_by: 'channels.name',
-    filters: {
-        date_range: 'last_30d',
-        store_ids: [],
-        channel_ids: [],
-    },
-};
+// Definição de Abas
+const TABS = [
+    { key: 'home', label: '1. Visão Geral' },
+    { key: 'store', label: '2. Análise Dinâmica' },
+    { key: 'specific', label: '3. Visão Geográfica' },
+];
 
+/*
+    * Componente principal do Dashboard.
+    * Gerencia a navegação entre abas, o estado global de metadados e a inicialização.
+*/
 const Dashboard = () => {
-    const [queryState, setQueryState] = useState(INITIAL_QUERY_STATE);
-    const [chartData, setChartData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [executionTimeMs, setExecutionTimeMs] = useState(0);
+    //1. Estado da Navegação
+    const [activeTab, setActiveTab] = useState('home');
 
-    const fetchData = useCallback(async () => {
-        setLoading(true);
-        setChartData(null);
-        setExecutionTimeMs(0);
+    //2. Estado dos Metadados (Listas de Lojas e Canais)
+    const [metada, setMetdata] = useState({ stores: [], channels: [] });
 
-        try {
-            console.log("Payload Enviado:", queryState);
-
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(queryState),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || `Erro HTTP: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            // Atualiza o estado com os dados e o tempo de execução do Backend
-            setChartData(result.data);
-            setExecutionTimeMs(result.execution_time_ms);
-
-            // Log de Performance
-            console.log(`Query executada em: ${result.execution_time_ms.toFixed(2)}ms`);
-
-        } catch (error) {
-            console.error("Erro ao buscar dados em analytics:", error.message);
-        } finally {
-            setLoading(false);
-        }
-    }, [queryState]);
-
+    // Efeito colateral para carregar metadados APENAS UMA VEZ na montagem do app
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+         const fetchMetadata = async () => {
+            try {
+                const response = await fetch(METADATA_URL);
+                if (!response.ok) throw new Error("Falha ao buscar metadados.");
+                const data = await response.json();
 
+                // Os metadados são passados para as abas que precisam das listas
+                setMetdata(data);
+            } catch (error) {
+                console.error("Erro ao carregar metadados:", error);
+            }
+         };
+         fetchMetadata();
+    },[]);
+
+    // Funçao que decide qual componente de aba renderizar
+    const renderTabContent = () => {
+        // As props {metadata} são passadas para as abas que precisam das listas de filtros.
+        const tabProps = { metada: metada };
+
+        switch (activeTab) {
+            case 'home':
+                return <HomeTab {...tabProps} />;
+            case 'store':
+                return <DynamicAnalysisTab {...tabProps} />;
+            case 'specific':
+                return <GeoAnalysisTab {...tabProps} />;
+            default:
+                return <div>Selecione uma aba válida para começar a análise.</div>;
+        }
+    };
 
     return (
         <div className="dashboard-container">
             <h1>🏆 Analytics: Visão Operacional da Maria</h1>
-
-            {/* LINHA 1: KPIs Rápidos e Controles */}
-            <div className="layout-row controls-kpis">
-                <QuickMetrics /> {/* Visão rápida do faturamento (servida por MV) */}
-            </div>
-            {/* LINHA 2: Controles e Definição da Query */}
-            <div className="layout-row query-definition">
-                <div className="col-controls">
-                    <MetricSelector 
-                        queryState={queryState} 
-                        setQueryState={setQueryState} 
-                    />
-                    <FilterPanel 
-                        queryState={queryState} 
-                        setQueryState={setQueryState} 
-                    />
-                </div>
-                <div className="col-grouping">
-                    <QueryControls 
-                        queryState={queryState} 
-                        setQueryState={setQueryState}
-                    />
-                </div>
-            </div>
-
-            {/* LINHA 3: Visualização do Resultado */}
-            <div className="layout-row chart-view">
-                <ChartDisplay 
-                    chartData={chartData} 
-                    loading={loading}
-                    executionTimeMs={executionTimeMs}
-                />
-            </div>
             
+            {/* Componente de Navegação de Abas */}
+            <div className="tab-navigation">
+                {TABS.map(tab => (
+                    <button
+                        key={tab.key}
+                        className={`btn-tab ${activeTab === tab.key ? 'active' : ''}`}
+                        onClick={() => setActiveTab(tab.key)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Conteúdo da Aba Ativa */}
+            <div className="tab-content">
+                {renderTabContent()}
+            </div>
         </div>
     );
 };
