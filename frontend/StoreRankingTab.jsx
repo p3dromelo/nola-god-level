@@ -1,5 +1,3 @@
-// frontend/StoreRankingTab.jsx
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { METRICS_CONFIG } from './analytics_config.js'; 
 
@@ -10,7 +8,6 @@ const RANK_METRICS = [
     { key: 'revenue', metric: 'total_amount', agg: 'SUM', label: 'Melhor Faturamento', format: 'currency' },
     { key: 'ticket', metric: 'total_amount', agg: 'AVG', label: 'Melhor Ticket Médio', format: 'currency' },
     { key: 'prep_time', metric: 'production_seconds', agg: 'AVG', label: 'Melhor Tempo de Preparo', format: 'minutes' },
-    // Adicionar mais métricas aqui, se necessário
 ];
 
 const StoreRankingTab = () => {
@@ -35,8 +32,8 @@ const StoreRankingTab = () => {
             const payload = {
                 metric: m.metric,
                 agg_func: m.agg,
-                group_by: 'stores.name', // Agrupamento fixo por loja
-                filters: { date_range: 'last_6m' } // Análise em 6 meses
+                group_by: 'stores.name',
+                filters: { date_range: 'last_6m' }
             };
             return fetch(API_URL, {
                 method: 'POST',

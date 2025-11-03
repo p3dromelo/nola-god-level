@@ -3,26 +3,23 @@ import HomeTab from "./HomeTab.jsx";
 import DynamicAnalysisTab from "./DynamicAnalysisTab.jsx";
 import StoreRankingTab from "./StoreRankingTab.jsx";
 
-// ✅ Corrigido: endpoint estava com erro de digitação ("metada" → "metadata")
 const METADATA_URL = "http://localhost:8000/api/v1/metadata/filters";
 
 // Abas do dashboard
 const TABS = [
   { key: "home", label: "1. Visão Geral" },
   { key: "store", label: "2. Análise Dinâmica" },
-  { key: "specific", label: "3. Ranking Geral" },
+  { key: "ranking", label: "3. Ranking Geral" },
 ];
 
-/**
- * 🧠 Componente principal do Dashboard
+/*
  * - Faz o fetch inicial dos metadados (lojas e canais)
  * - Gerencia as abas e passa os metadados para os componentes filhos
- */
+*/
 const Dashboard = () => {
   // Estado de controle de abas
   const [activeTab, setActiveTab] = useState("home");
 
-  // ✅ Corrigido: nome do estado e função set para "metadata"
   const [metadata, setMetadata] = useState({ stores: [], channels: [] });
 
   // Carrega metadados apenas uma vez ao montar o componente
@@ -44,7 +41,6 @@ const Dashboard = () => {
 
   // Define qual aba será renderizada
   const renderTabContent = () => {
-    // ✅ Corrigido: agora passamos { metadata } corretamente para as abas
     const tabProps = { metadata };
 
     switch (activeTab) {
@@ -52,7 +48,7 @@ const Dashboard = () => {
         return <HomeTab {...tabProps} />;
       case "store":
         return <DynamicAnalysisTab {...tabProps} />;
-      case "specific":
+      case "ranking":
         return <StoreRankingTab {...tabProps} />;
       default:
         return <div>Selecione uma aba válida para começar a análise.</div>;

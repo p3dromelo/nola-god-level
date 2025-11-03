@@ -14,13 +14,13 @@ const INITIAL_QUERY = {
     group_by: 'stores.name',
     filters: {
         date_range: 'last_30d',
-        store_ids: [], // Começa vazio, será populado pelo useEffect
+        store_ids: [],
     },
 };
 
-/**
+/*
  * Componente que permite a comparação de métricas entre múltiplas lojas selecionadas.
- */
+*/
 const DynamicAnalysisTab = ({ metadata }) => {
     const [queryState, setQueryState] = useState(INITIAL_QUERY);
     const [chartData, setChartData] = useState(null);
@@ -32,7 +32,6 @@ const DynamicAnalysisTab = ({ metadata }) => {
         (m) => m.metric === queryState.metric && m.agg === queryState.agg_func
     );
 
-    // 🌟 CORREÇÃO CRÍTICA: Handler unificado para atualizar o estado corretamente 🌟
     const handleQueryUpdate = (key, value) => {
         setQueryState(prev => {
             // Se for atualização de métrica ou agregação (MetricSelector)
@@ -49,9 +48,8 @@ const DynamicAnalysisTab = ({ metadata }) => {
             return prev;
         });
     };
-    // ------------------------------------------------------------------
-
-    // 🌟 Inicializa a seleção de lojas assim que os metadados estiverem disponíveis
+    
+    // Inicializa a seleção de lojas assim que os metadados estiverem disponíveis
     useEffect(() => {
         if (metadata?.stores?.length > 0 && queryState.filters.store_ids.length === 0) {
             const initialSelectedStoreIds = metadata.stores.map((s) => s.id).slice(0, 2);
@@ -65,7 +63,7 @@ const DynamicAnalysisTab = ({ metadata }) => {
         }
     }, [metadata, queryState.filters.store_ids]);
 
-    // 🌟 Efeito para buscar os dados sempre que a query mudar
+    // Efeito para buscar os dados sempre que a query mudar
     useEffect(() => {
         const fetchData = async () => {
             // Evita requisições se o usuário ainda não selecionou 2 lojas
@@ -114,14 +112,14 @@ const DynamicAnalysisTab = ({ metadata }) => {
                     <h3 className="mt-4">1. 📊 Métrica de Comparação</h3>
                     <MetricSelector 
                         queryState={queryState} 
-                        setQueryState={handleQueryUpdate} // 👈 CORRIGIDO
+                        setQueryState={handleQueryUpdate}
                     />
 
                     {/* 2. FILTRO DE PERÍODO (APENAS DATA) */}
                     <h3 className="mt-4">2. 📅 Filtro de Período</h3>
                     <FilterPanel
                         queryState={queryState}
-                        setQueryState={setQueryState} // 👈 CORRIGIDO
+                        setQueryState={setQueryState} 
                         availableStores={[]}
                         availableChannels={[]}
                     />
@@ -129,8 +127,8 @@ const DynamicAnalysisTab = ({ metadata }) => {
                     {/* 3. GAVETA DE SELEÇÃO DE LOJAS E CANAIS */}
                     <SelectionDrawer
                         queryState={queryState}
-                        setQueryState={setQueryState} // 👈 CORRIGIDO
-                        metadata={metadata} // Passamos o objeto completo de metadados
+                        setQueryState={setQueryState} 
+                        metadata={metadata} 
                     />
                 </div>
 

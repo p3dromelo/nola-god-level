@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 
-/**
+/*
  * Componente de filtro lateral ("gaveta universal") para selecionar
  * múltiplas lojas e canais de análise.
- */
+*/
 const SelectionDrawer = ({ queryState, setQueryState, metadata }) => {
     
     // Atualiza os filtros de forma imutável e segura

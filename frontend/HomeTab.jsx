@@ -51,7 +51,6 @@ const HomeTab = ({ metadata }) => { // Recebe metadata (lojas/canais) do Dashboa
         });
     };
 
-
     // Lógica para disparar a chamada de API (FastAPI)
     const fetchHomeData = useCallback(async () => {
         setLoading(true);
@@ -121,7 +120,7 @@ const HomeTab = ({ metadata }) => { // Recebe metadata (lojas/canais) do Dashboa
                     
                     <FilterPanel 
                         queryState={homeQueryState} 
-                        setQueryState={setHomeQueryState} // Passa o setter nativo para o FilterPanel
+                        setQueryState={setHomeQueryState}
                         availableStores={metadata.stores} 
                         availableChannels={metadata.channels} 
                     />
@@ -139,7 +138,7 @@ const HomeTab = ({ metadata }) => { // Recebe metadata (lojas/canais) do Dashboa
                 </div>
             </div>
             
-            <p className="note mt-3">Utilize as outras abas para análises detalhadas por loja e pesquisas geográficas.</p>
+            <p className="note mt-3">Utilize as outras abas para análises detalhadas por loja e ranking de lojas.</p>
         </div>
     );
 };

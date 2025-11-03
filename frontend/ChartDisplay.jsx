@@ -40,9 +40,9 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs, metricFormat }) => 
 
         return (
             <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5}}>
+                <BarChart data={chartData} margin={{ top: 20, right: 40, left: 90, bottom: 5}}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="dimension" interval={0} angle={-45} textAnchor="end" height={100} />
+                <XAxis dataKey="dimension" interval={0} angle={-45} textAnchor="end" height={120} />
                 <YAxis
                     tickFormatter={(value) => formatValue(value, currentMetricFormat)}
                 />
@@ -62,7 +62,7 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs, metricFormat }) => 
     };
 
     // Função que renderiza a table (Pivot)
-    const renderTable = () => {
+const renderTable = () => {
         if (!chartData || chartData.length === 0) return null;
 
         const headers = Object.keys(chartData[0]);
@@ -78,8 +78,13 @@ const ChartDisplay = ({ chartData, loading, executionTimeMs, metricFormat }) => 
                     <tbody>
                         {chartData.map((row, index) => (
                             <tr key={index}>
-                                {/* NOTA: Aqui não usamos formatValue, apenas toLocaleString para simplicidade na tabela */}
-                                {headers.map(h => <td key={h}>{row[h].toLocaleString('pt-BR')}</td>)}
+                                {headers.map(h => (
+                                    <td key={h}>
+                                        {h === 'result'
+                                            ? formatValue(row[h], currentMetricFormat)
+                                            : row[h]}
+                                    </td>
+                                ))}
                             </tr>
                         ))}
                     </tbody>
