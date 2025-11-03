@@ -93,7 +93,9 @@ def build_analytics_query(metric: str, agg_func: str, group_by: str, filters: Di
 
     # Filtro de Data (Otimizado para PostgreSQL com INTERVAL)
     if 'date_range' in filters:
-        if filters['date_range'] == 'last_30d':
+        if filters['date_range'] == 'last_7d':
+            where_clauses.append("s.created_at >= NOW() - INTERVAL '7 days'")
+        elif filters['date_range'] == 'last_30d':
             where_clauses.append("s.created_at >= NOW() - INTERVAL '30 days'")
         elif filters['date_range'] == 'last_6m':
             where_clauses.append("s.created_at >= NOW() - INTERVAL '6 months'")
