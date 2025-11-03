@@ -18,5 +18,7 @@ npm run dev
 
 # 6. Acesso à Aplicação
 **Dashboard** http://localhost:5173/ (Acessado após "npm run dev")
+
 **pgAdmin (DB)** http://localhost:5050/ (Email: admin@godlevel.com / Senha: admin)
+
 **FastAPI (API)** http://localhost:8000/api/v1/status (Health Check)
