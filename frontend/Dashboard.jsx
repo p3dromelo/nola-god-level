@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import HomeTab from "./HomeTab.jsx";
 import DynamicAnalysisTab from "./DynamicAnalysisTab.jsx";
-import GeoAnalysisTab from "./GeoAnalysisTab.jsx";
+import StoreRankingTab from "./StoreRankingTab.jsx";
 
 // ✅ Corrigido: endpoint estava com erro de digitação ("metada" → "metadata")
 const METADATA_URL = "http://localhost:8000/api/v1/metadata/filters";
@@ -10,7 +10,7 @@ const METADATA_URL = "http://localhost:8000/api/v1/metadata/filters";
 const TABS = [
   { key: "home", label: "1. Visão Geral" },
   { key: "store", label: "2. Análise Dinâmica" },
-  { key: "specific", label: "3. Visão Geográfica" },
+  { key: "specific", label: "3. Ranking Geral" },
 ];
 
 /**
@@ -53,7 +53,7 @@ const Dashboard = () => {
       case "store":
         return <DynamicAnalysisTab {...tabProps} />;
       case "specific":
-        return <GeoAnalysisTab {...tabProps} />;
+        return <StoreRankingTab {...tabProps} />;
       default:
         return <div>Selecione uma aba válida para começar a análise.</div>;
     }
