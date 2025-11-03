@@ -3,7 +3,7 @@ git clone https://github.com/p3dromelo/nola-god-level.git
 cd nola-god-level
 
 # 2. Iniciar todos os serviços (Postgres, FastAPI) e ferramentas (PgAdmin)
-# Nota: O Docker irá reconstruir o Backend para aplicar as últimas correções de CORS.
+##Nota: O Docker irá reconstruir o Backend para aplicar as últimas correções de CORS. ##
 docker compose --profile tools up -d postgres backend pgadmin
 
 # 3. Gerar 6 meses de dados de vendas no PostgreSQL
