@@ -1,9 +1,11 @@
 # 1. Clonar o repositório
 git clone https://github.com/p3dromelo/nola-god-level.git
+
 cd nola-god-level
 
 # 2. Iniciar todos os serviços (Postgres, FastAPI) e ferramentas (PgAdmin)
 ##Nota: O Docker irá reconstruir o Backend para aplicar as últimas correções de CORS. ##
+
 docker compose --profile tools up -d postgres backend pgadmin
 
 # 3. Gerar 6 meses de dados de vendas no PostgreSQL
@@ -11,6 +13,7 @@ docker compose run --rm data-generator
 
 # 4. Instalar dependências Node (Se for a primeira execução)
 cd frontend
+
 npm install
 
 # 5. Iniciar o servidor React/Vite
